@@ -10,7 +10,7 @@ const EmployeeModalContent = (props) => {
   const [eid] = useState(props.data.employee_id);
   const [efullname, esetfullname] = useState(props.data.fullname);
   const [egender, esetgender] = useState(props.data.gender);
-  const [eview] = useState(props.view);
+  const [eView] = useState(props.view);
 
 
   const updateEmployee = (e) => {
@@ -100,6 +100,6 @@ const EmployeeModalContent = (props) => {
       </div>
     );
   }
-  return ((!eview) ? eForm() : eInfo());
+  return ((!eView) ? eForm() : eInfo());
 };
 export default EmployeeModalContent;
