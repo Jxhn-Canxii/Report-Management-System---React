@@ -27,7 +27,7 @@ const Employee = () => {
   const [tabledata, settabledata] = useState();
   const [isSearch,setisSearch] = useState(false);
   useEffect(() => {
-    return (!isSearch) ? getEmployee() : console.log('searching');
+    return (!isSearch.length) ? getEmployee() : console.log('searching');
   }, [tabledata]);
   ///event handlers
   const handleSubmit = (e) => {
@@ -83,8 +83,8 @@ const Employee = () => {
       });
   };
   const filterEmployee = (e) => {
-    setisSearch(true);
     const filterText = e.target.value;
+    setisSearch(filterText);
     const filteredData = () => {
       return tabledata.filter(data => data.fn.includes(filterText));
     }
