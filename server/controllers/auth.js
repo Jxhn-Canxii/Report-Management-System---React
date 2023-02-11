@@ -20,9 +20,10 @@ export const register = async (req, res) => {
       password: passwordHash,
     });
     const savedUser = await newUser.save();
-    res.status(201).json(savedUser);
+    return res.status(201).json(savedUser);    
   } catch (err) {
     res.status(500).json({ error: err.message });
+    //res.status(500).json({ error: "Submission Error!." });
   }
 };
 

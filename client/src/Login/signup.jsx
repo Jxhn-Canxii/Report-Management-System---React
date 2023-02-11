@@ -18,15 +18,15 @@ const Signup = () => {
     axios.post('http://localhost:3001/auth/register',{ username: username,email: email, password: password, })
     .then(response => {
       MySwal.fire({
-        title: "Error",
+        title:  "Success",
         text: response.data.msg,
-        icon: "error",
+        icon: "success",
       });
     })
     .catch(error => {
       MySwal.fire({
         title: "Error",
-        text: error.response.data.msg,
+        text: error.response.data.error,
         icon: "error",
       });
     });

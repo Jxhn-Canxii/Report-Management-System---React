@@ -43,7 +43,7 @@ const EmployeeModalContent = (props) => {
     return(
       <Form onSubmit={updateEmployee}>
       <FormGroup>
-        <Label for="text">Fullname</Label>{props.success}
+        <Label for="text">Employee ID: </Label>
         <Input type="text" name="id" id="id" required readOnly value={eid} />
       </FormGroup>
       <FormGroup>

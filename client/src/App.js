@@ -12,26 +12,26 @@ function App() {
   const isAuth = Boolean(useSelector((state) => state.token));
 
   return (
-    <>
-      <Router>
-        {isAuth ? <Sidebar /> : false}
-        <Routes>
-          <Route path="/" element={<LoginPage />} />
-          <Route path="/signup" element={<Signup />} />
-          <Route
-            path="/home"
-            element={isAuth ? <Home /> : <Navigate to="/" />}
-          />
-          <Route
-            path="/employee"
-            element={isAuth ? <Employee /> : <Navigate to="/" />}
-          />
-          <Route path="/login" element={<LoginPage />} />
-          <Route path="*" element={<ErrorPage />} />
-        </Routes>
-        {isAuth ? <Footer /> : false}
-      </Router>
-    </>
+      <div className="wrapper">
+        <Router>
+          {isAuth ? <Sidebar /> : false}
+          <Routes>
+            <Route path="/" element={<LoginPage />} />
+            <Route path="/signup" element={<Signup />} />
+            <Route
+              path="/home"
+              element={isAuth ? <Home /> : <Navigate to="/" />}
+            />
+            <Route
+              path="/employee"
+              element={isAuth ? <Employee /> : <Navigate to="/" />}
+            />
+            <Route path="/login" element={<LoginPage />} />
+            <Route path="*" element={<ErrorPage />} />
+          </Routes>
+          {isAuth ? <Footer /> : false}
+        </Router>
+      </div>
   );
 }
 

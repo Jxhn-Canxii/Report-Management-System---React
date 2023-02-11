@@ -6,20 +6,33 @@ import EmployeeModalContent from '../Content/employeeModalContent';
 import axios from 'axios';
 import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
+import Datatable from 'react-data-table-component';
 const MySwal = withReactContent(Swal);
 
 
 const Employee = () => {
   const [fullname,setfullname] = useState('');
   const [gender,setgender] = useState('');
-  const [tabledata,settabledata] = useState([]);
+  const [tabledata,settabledata] = useState();
   useEffect(() => {
     async function getEmployee(){
         axios
           .get("http://localhost:3001/employee/listEmployee")
           .then((response) => {
             if (response) {
-              settabledata(response.data);
+              let table_ = [];
+              let tdata = response.data;
+              if (tdata.length) {
+                for (let i = 0; i < tdata.length; i++) {
+                  table_.push({
+                    id: tdata[i].employee_id,
+                    fn: tdata[i].fullname,
+                    gn: tdata[i].gender,
+                    act: "Test",
+                  });
+                }
+              }
+              return settabledata(table_);
             }
           }, [])
           .catch((error) => {
@@ -71,56 +84,30 @@ const Employee = () => {
     });
   }
   const employeeModal = (d,v) => {
-    return <EmployeeModalContent data={d} view={v} success="true"></EmployeeModalContent>;
+    return <EmployeeModalContent data={d} view={v}></EmployeeModalContent>;
   }
-  const table = () =>{
-      let table_ = [];
-      if(tabledata.length){
-        for (let i = 0; i < tabledata.length; i++) {
-          table_.push(
-            <tr key={tabledata[i]._id} className={tabledata[i]._id}>
-              <td>{tabledata[i].employee_id}</td>
-              <td>{tabledata[i].fullname}</td>
-              <td>{tabledata[i].gender}</td>
-              <td>
-                <ButtonGroup>
-                  <ModalUtils
-                    btitle="View"
-                    bcolor="primary"
-                    mtitle="View Info"
-                    mfoot={false}
-                    mbody={() => employeeModal(tabledata[i],true)}
-                    msize="md"
-                  ></ModalUtils>
-                  <ModalUtils
-                    btitle="Edit"
-                    bcolor="success"
-                    mtitle="Edit Info"
-                    mfoot={false}
-                    mbody={() => employeeModal(tabledata[i],false)}
-                    msize="md"
-                  ></ModalUtils>
-                  <Button
-                    color="danger"
-                    type="button"
-                    onClick={() => deleteEmployee(tabledata[i].employee_id)}
-                    size="md"
-                  >
-                    Delete
-                  </Button>
-                </ButtonGroup>
-              </td>
-            </tr>
-          );
-        }
-      }else{
-        table_.push(<tr>
-          <td colSpan={3} className='text-red text-center'>No data available!</td>
-        </tr>);
-      }
-      
-      return table_
-  }
+  const table_column = [
+    {
+      name: "Employee ID#",
+      selector: (row) => row.id,
+      sortable: true,
+    },
+    {
+      name: "Full Name",
+      selector: (row) => row.fn,
+      sortable: true,
+    },
+    {
+      name: "Gender",
+      selector: (row) => row.gn,
+      sortable: true,
+    },
+    {
+      name: "Action",
+      selector: (row) => row.act,
+      sortable: true,
+    },
+  ];
   return (
     <div className="content-wrapper">
       <div className="content-header">
@@ -192,17 +179,13 @@ const Employee = () => {
                 <h3 className="card-title">Employee List</h3>
               </div>
               <div className="card-body">
-                <table className="table table-bordered table-hover table-sm">
-                  <thead>
-                    <tr>
-                      <th>ID</th>
-                      <th>Fullname</th>
-                      <th>Gender</th>
-                      <th>Action</th>
-                    </tr>
-                  </thead>
-                  <tbody>{table()}</tbody>
-                </table>
+                <Datatable
+                  title="Employee List"
+                  data={tabledata}
+                  columns={table_column}
+                  defaultSortFieldId
+                  pagination={5}
+                ></Datatable>
               </div>
             </div>
           </div>
