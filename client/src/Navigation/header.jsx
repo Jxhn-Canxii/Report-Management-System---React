@@ -62,7 +62,7 @@ const Sidebar = () => {
               </Link>
             </li>
             <li className="nav-item">
-              <Link to='/users' className="nav-link">
+              <Link to='/employee' className="nav-link">
               <FontAwesomeIcon icon={faUsers} className="nav-icon" />
                 <p>Users</p>
               </Link>

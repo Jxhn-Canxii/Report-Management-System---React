@@ -4,12 +4,14 @@ import Employee from "../models/employee.js";
 export const registerEmployee = async (req, res) => {
   try {
     const {
+      employee_id,
       fullname,
       gender,
     } = req.body;
 
 
     const newEmployee = new Employee({
+      employee_id,
       fullname,
       gender,
     });
@@ -31,33 +33,37 @@ export const listEmployee = async (req, res) => {
 export const deleteEmployee = async (req, res) => {
   try {
     const {
-      fullname,
+      employee_id,
     } = req.body;
 
 
     const newEmployee = new Employee({
-      fullname,
+      employee_id,
     });
-    const listEmployees = await Employee.deleteOne({fullname});
+    const listEmployees = await Employee.deleteOne({employee_id});
     res.status(200).json(listEmployees);
   } catch (err) {
     res.status(500).json({ msg: err.message });
   }
 };
 /* UPDATE EMPLOYEE */
-export const update = async (req, res) => {
+export const updateEmployee = async (req, res) => {
   try {
-    const { email, password } = req.body;
-    const user = await User.findOne({ email: email });
-    if (!user) return res.status(400).json({ msg: "User does not exist. " });
+    const {
+      employee_id,
+      fullname,
+      gender,
+    } = req.body;
 
-    const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch) return res.status(400).json({ msg: "Invalid credentials. " });
 
-    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET);
-    delete user.password;
-    res.status(200).json({ token, user });
+    const newEmployee = new Employee({
+      employee_id,
+      fullname,
+      gender,
+    });
+    const updateEmployees = await Employee.updateOne({employee_id:employee_id},{fullname : fullname,gender: gender});
+    res.status(201).json(updateEmployees);
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    res.status(500).json({ msg: err.message });
   }
 };

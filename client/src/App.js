@@ -1,9 +1,10 @@
 import { BrowserRouter as Router,Navigate, Routes,Route } from 'react-router-dom';
 import { useSelector } from "react-redux"
 import ErrorPage from './Error';
-import Home from './Home';
-import LoginPage from './Login';
-import Signup from './SignUp';
+import Signup from './Login/signup';
+import LoginPage from "./Login/login";
+import Home from './Page/home';
+import Employee from './Page/employee';
 import Sidebar from './Navigation/header';
 import Footer from './Navigation/footer';
 
@@ -13,15 +14,22 @@ function App() {
   return (
     <>
       <Router>
-        { (isAuth) ? <Sidebar/> : false }
+        {isAuth ? <Sidebar /> : false}
         <Routes>
-          <Route path="/" element={<LoginPage/>}/>
-          <Route path="/signup" element={<Signup/>}/>
-          <Route path="/home" element={isAuth ? <Home /> : <Navigate to="/" />}/>
-          <Route path="/login" element={<LoginPage/>}/>
-          <Route path="*" element={<ErrorPage/>}/>
+          <Route path="/" element={<LoginPage />} />
+          <Route path="/signup" element={<Signup />} />
+          <Route
+            path="/home"
+            element={isAuth ? <Home /> : <Navigate to="/" />}
+          />
+          <Route
+            path="/employee"
+            element={isAuth ? <Employee /> : <Navigate to="/" />}
+          />
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="*" element={<ErrorPage />} />
         </Routes>
-        { (isAuth) ? <Footer/> : false }
+        {isAuth ? <Footer /> : false}
       </Router>
     </>
   );
