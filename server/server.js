@@ -9,6 +9,7 @@ import { registerEmployee } from "./controllers/employee.js";
 import { listEmployee } from "./controllers/employee.js";
 import { deleteEmployee } from "./controllers/employee.js";
 import { updateEmployee } from "./controllers/employee.js";
+import { filterEmployee } from "./controllers/employee.js";
 const db_url = process.env.DATABASE_URL;
 dotenv.config();
 
@@ -22,6 +23,7 @@ app.post("/employee/registerEmployee", registerEmployee)
 app.get("/employee/listEmployee",listEmployee)
 app.post("/employee/deleteEmployee",deleteEmployee)
 app.post("/employee/updateEmployee",updateEmployee)
+app.get("/employee/filterEmployee", filterEmployee);
 /* ROUTES */
 app.use("/auth", authRoutes)
 

@@ -1,122 +1,164 @@
-import React, { useEffect, useState } from 'react';
-import { Link} from 'react-router-dom';
-import { Button, Form, FormGroup, Label, Input,ButtonGroup } from 'reactstrap';
-import ModalUtils from '../Utility/modal';
-import EmployeeModalContent from '../Content/employeeModalContent';
-import axios from 'axios';
-import Swal from 'sweetalert2';
-import withReactContent from 'sweetalert2-react-content';
-import Datatable from 'react-data-table-component';
+/** @format */
+
+import React, { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
+import {
+  Button,
+  Form,
+  FormGroup,
+  Label,
+  Input,
+  InputGroup,
+  ButtonGroup,
+} from "reactstrap";
+import ModalUtils from "../Utility/modal";
+import EmployeeModalContent from "../Content/employeeModalContent";
+import axios from "axios";
+import Swal from "sweetalert2";
+import withReactContent from "sweetalert2-react-content";
+import Datatable from "react-data-table-component";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faTimes } from "@fortawesome/free-solid-svg-icons";
 const MySwal = withReactContent(Swal);
 
-
 const Employee = () => {
-  const [fullname,setfullname] = useState('');
-  const [gender,setgender] = useState('');
-  const [tabledata,settabledata] = useState();
+  const [fullname, setfullname] = useState("");
+  const [gender, setgender] = useState("");
+  const [tabledata, settabledata] = useState();
+  const [isSearch,setisSearch] = useState(false);
   useEffect(() => {
-    async function getEmployee(){
-        axios
-          .get("http://localhost:3001/employee/listEmployee")
-          .then((response) => {
-            if (response) {
-              let table_ = [];
-              let tdata = response.data;
-              if (tdata.length) {
-                for (let i = 0; i < tdata.length; i++) {
-                  table_.push({
-                    id: tdata[i].employee_id,
-                    fn: tdata[i].fullname,
-                    gn: tdata[i].gender,
-                    act: action_button(tdata[i]),
-                  });
-                }
-              }
-              return settabledata(table_);
-            }
-          }, [])
-          .catch((error) => {
-            console.log(error);
-          });
-    }
-    getEmployee()
-  },[tabledata])
-  const action_button = (data) => {
-     return (
-       <ButtonGroup>
-         <ModalUtils
-           btitle="View"
-           bcolor="primary"
-           mtitle="View Info"
-           mfoot={false}
-           mbody={() => employeeModal(data, true)}
-           msize="md"
-           bsize="sm"
-         ></ModalUtils>
-         <ModalUtils
-           btitle="Edit"
-           bcolor="success"
-           mtitle="Edit Info"
-           mfoot={false}
-           mbody={() => employeeModal(data, false)}
-           msize="md"
-           bsize="sm"
-         ></ModalUtils>
-         <Button
-           color="danger"
-           type="button"
-           onClick={() => deleteEmployee(data.employee_id)}
-          size="sm"
-         >
-           Delete
-         </Button>
-       </ButtonGroup>
-     );
-  }
+    return (!isSearch) ? getEmployee() : console.log('searching');
+  }, [tabledata]);
+  ///event handlers
   const handleSubmit = (e) => {
     e.preventDefault();
     const fullname = e.target.elements.fullname.value;
     const gender = e.target.elements.gender.value;
-    const id = 'EMP-' + Math.floor(Math.random() * 10000);
-    axios.post('http://localhost:3001/employee/registerEmployee',{ employee_id: id,fullname: fullname,gender: gender })
-    .then(response => {
-      if(response) {
+    const id = "EMP-" + Math.floor(Math.random() * 10000);
+    axios
+      .post("http://localhost:3001/employee/registerEmployee", {
+        employee_id: id,
+        fullname: fullname,
+        gender: gender,
+      })
+      .then((response) => {
+        if (response) {
+          MySwal.fire({
+            title: "Success",
+            text: response.data.msg,
+            icon: "success",
+          });
+        }
+      })
+      .catch((error) => {
+        MySwal.fire({
+          title: "Error",
+          text: error.response.data.msg,
+          icon: "error",
+        });
+      });
+  };
+  const getEmployee = () => {
+    axios
+      .get("http://localhost:3001/employee/listEmployee")
+      .then((response) => {
+        if (response) {
+          let table_ = [];
+          let tdata = response.data;
+          if (tdata.length) {
+            for (let i = 0; i < tdata.length; i++) {
+              table_.push({
+                id: tdata[i].employee_id,
+                fn: tdata[i].fullname,
+                gn: tdata[i].gender,
+                act: action_button(tdata[i]),
+              });
+            }
+          }
+          return settabledata(table_);
+        }
+      }, [])
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+  const filterEmployee = (e) => {
+    setisSearch(true);
+    const filterText = e.target.value;
+    const filteredData = () => {
+      return tabledata.filter(data => data.fn.includes(filterText));
+    }
+    return settabledata(filteredData());
+  };
+  const deleteEmployee = (e) => {
+    axios
+      .post("http://localhost:3001/employee/deleteEmployee", { employee_id: e })
+      .then((response) => {
         MySwal.fire({
           title: "Success",
           text: response.data.msg,
           icon: "success",
         });
-      }
-    })
-    .catch(error => {
-      MySwal.fire({
-        title: "Error",
-        text: error.response.data.msg,
-        icon: "error",
+      })
+      .catch((error) => {
+        MySwal.fire({
+          title: "Error",
+          text: error.response.data.msg,
+          icon: "error",
+        });
       });
-    });
-  }
-
-  const deleteEmployee = (e) =>{
-    axios.post('http://localhost:3001/employee/deleteEmployee',{employee_id : e})
-    .then(response => {
-      MySwal.fire({
-        title: "Success",
-        text: response.data.msg,
-        icon: "success",
-      });
-    })
-    .catch(error => {
-      MySwal.fire({
-        title: "Error",
-        text: error.response.data.msg,
-        icon: "error",
-      });
-    });
-  }
-  const employeeModal = (d,v) => {
+  };
+  ///utility components
+  const employeeModal = (d, v) => {
     return <EmployeeModalContent data={d} view={v}></EmployeeModalContent>;
-  }
+  };
+  const action_button = (data) => {
+    return (
+      <ButtonGroup>
+        <ModalUtils
+          btitle="View"
+          bcolor="primary"
+          mtitle="View Info"
+          mfoot={false}
+          mbody={() => employeeModal(data, true)}
+          msize="md"
+          bsize="sm"
+        ></ModalUtils>
+        <ModalUtils
+          btitle="Edit"
+          bcolor="success"
+          mtitle="Edit Info"
+          mfoot={false}
+          mbody={() => employeeModal(data, false)}
+          msize="md"
+          bsize="sm"
+        ></ModalUtils>
+        <Button
+          color="danger"
+          type="button"
+          onClick={() => deleteEmployee(data.employee_id)}
+          size="sm"
+        >
+          Delete
+        </Button>
+      </ButtonGroup>
+    );
+  };
+  const Searchbar = () => {
+    return (
+      <InputGroup className="col-md-4">
+        <Input
+          type="search"
+          className="font-control"
+          placeholder="Search"
+          onChange={filterEmployee}
+        ></Input>
+        <Button className="btn btn-md bg-red" onClick={ () => setisSearch(false)}>
+          <FontAwesomeIcon icon={faTimes} />
+        </Button>
+      </InputGroup>
+    );
+  };
   const table_column = [
     {
       name: "Employee ID#",
@@ -217,7 +259,8 @@ const Employee = () => {
                   defaultSortFieldId
                   pagination={5}
                   className="table table-bordered table-hover table-striped"
-                  search={true}
+                  subHeader
+                  subHeaderComponent={Searchbar()}
                 ></Datatable>
               </div>
             </div>

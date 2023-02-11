@@ -30,6 +30,15 @@ export const listEmployee = async (req, res) => {
     res.status(500).json({ msg: err.message });
   }
 };
+export const filterEmployee = async (req, res) => {
+  try {
+    const { filter } = req.body;
+    const filterEmployees = await Employee.find({ "$**": filter });
+    res.status(200).json(filterEmployees);
+  } catch (err) {
+    res.status(500).json({ msg: err.message });
+  }
+};
 export const deleteEmployee = async (req, res) => {
   try {
     const {
