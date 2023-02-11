@@ -28,7 +28,7 @@ const Employee = () => {
                     id: tdata[i].employee_id,
                     fn: tdata[i].fullname,
                     gn: tdata[i].gender,
-                    act: "Test",
+                    act: action_button(tdata[i]),
                   });
                 }
               }
@@ -41,7 +41,38 @@ const Employee = () => {
     }
     getEmployee()
   },[tabledata])
-
+  const action_button = (data) => {
+     return (
+       <ButtonGroup>
+         <ModalUtils
+           btitle="View"
+           bcolor="primary"
+           mtitle="View Info"
+           mfoot={false}
+           mbody={() => employeeModal(data, true)}
+           msize="md"
+           bsize="sm"
+         ></ModalUtils>
+         <ModalUtils
+           btitle="Edit"
+           bcolor="success"
+           mtitle="Edit Info"
+           mfoot={false}
+           mbody={() => employeeModal(data, false)}
+           msize="md"
+           bsize="sm"
+         ></ModalUtils>
+         <Button
+           color="danger"
+           type="button"
+           onClick={() => deleteEmployee(data.employee_id)}
+          size="sm"
+         >
+           Delete
+         </Button>
+       </ButtonGroup>
+     );
+  }
   const handleSubmit = (e) => {
     e.preventDefault();
     const fullname = e.target.elements.fullname.value;
@@ -185,6 +216,8 @@ const Employee = () => {
                   columns={table_column}
                   defaultSortFieldId
                   pagination={5}
+                  className="table table-bordered table-hover table-striped"
+                  search={true}
                 ></Datatable>
               </div>
             </div>
