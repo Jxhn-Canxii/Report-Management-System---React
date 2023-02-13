@@ -17,16 +17,17 @@ import axios from "axios";
 import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
 import Datatable from "react-data-table-component";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faTimes } from "@fortawesome/free-solid-svg-icons";
 const MySwal = withReactContent(Swal);
 
 const Employee = () => {
   const [fullname, setfullname] = useState("");
   const [gender, setgender] = useState("");
   const [tabledata, settabledata] = useState();
-  const [isSearch,setisSearch] = useState(false);
-  useEffect(() => {
-    return (!isSearch.length) ? getEmployee() : console.log('searching');
-  }, [tabledata]);
+  const [isSearch, setisSearch] = useState(false);
+  useEffect(() => {}, []);
+
   ///event handlers
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -80,11 +81,12 @@ const Employee = () => {
         console.log(error);
       });
   };
-  const filterEmployee = (filterText) => {
+  const filterEmployee = (e) => {
+    const filterText = e.target.value;
     setisSearch(filterText);
     const filteredData = () => {
-      return tabledata.filter(data => data.fn.includes(filterText));
-    }
+      return tabledata.filter((data) => data.fn.includes(filterText));
+    };
     return settabledata(filteredData());
   };
   const deleteEmployee = (e) => {
@@ -147,9 +149,15 @@ const Employee = () => {
         <Input
           type="search"
           className="font-control"
-          placeholder="Search Name"
-          onChange={(e) => filterEmployee(e.target.value)}
+          placeholder="Search"
+          onChange={filterEmployee()}
         ></Input>
+        <Button
+          className="btn btn-md bg-red"
+          onClick={() => setisSearch(false)}
+        >
+          <FontAwesomeIcon icon={faTimes} />
+        </Button>
       </InputGroup>
     );
   };
